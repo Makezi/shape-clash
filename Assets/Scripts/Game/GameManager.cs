@@ -10,6 +10,7 @@ public enum Medal { NONE, BRONZE, SILVER, GOLD, PLATINUM, DIAMOND };
 public class GameManager : MonoBehaviour {
 
 	public string gameTitle;							// Game title
+	public int targetFrameRate = 60;					// Target frame rate cap
 	public PlayerController player;						// Reference to PlayerController
 	public StateMachine<GameManager> stateMachine;		// Game state machine				
 	public int[] medalBreakpoints;						// Score breakpoints which reward medals
@@ -45,6 +46,9 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		InitGameStates();
+		Application.targetFrameRate = 60;
+
+
 		// PlayerPrefs.DeleteAll(); // USEFUL LATER ON TO PROVIDE PLAYERS AN OPTION TO RESET SCORES
 	}
 
