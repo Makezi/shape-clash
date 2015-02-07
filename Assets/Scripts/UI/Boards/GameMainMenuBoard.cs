@@ -6,7 +6,7 @@ public class GameMainMenuBoard : UIBoard {
 
 	public Text gameNameLabel;
 
-	void Start(){
+	new void Start(){
 		base.Start();
 		if(gameNameLabel != null){
 			gameNameLabel.text = GameManager.Instance.gameTitle;

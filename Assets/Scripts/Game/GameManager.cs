@@ -9,6 +9,8 @@ public enum Medal { NONE, BRONZE, SILVER, GOLD, PLATINUM, DIAMOND };
 
 public class GameManager : MonoBehaviour {
 
+	public static GameManager Instance { get; private set; }
+
 	public string gameTitle;							// Game title
 	public int targetFrameRate = 60;					// Target frame rate cap
 	public PlayerController player;						// Reference to PlayerController
@@ -17,38 +19,23 @@ public class GameManager : MonoBehaviour {
 
 	public delegate void GameHandler();
 	public event GameHandler onScore;					// Event triggered when player has scored
-
-	private static GameManager instance;				// Singleton instance
 	
 	// private Score score;								// Current session score
 	// private World mainWorld = new World("main_world");	// Game world
 	private Medal medal;								// Medal earned in current session
 
-	public static GameManager Instance {
-		get {
-			if(instance == null){
-				instance = GameObject.FindObjectOfType<GameManager>();
-				DontDestroyOnLoad(instance.gameObject);
-			}
-			return instance;
-		}
-	}
-
 	void Awake(){
-		if(instance == null){
-			// If first instance, make it Singleton
-			instance = this;
-			DontDestroyOnLoad(this);
-		}else{
-			// If Singleton already exists, destroy it
-			if(this != instance){
-				Destroy(this.gameObject);
-			}
+		// Check if there are instance conflicts, if so, destroy other instances
+		if(Instance != null && Instance != this){
+			Destroy(gameObject);
 		}
+		// Save singleton instance
+		Instance = this;
+		// Don't destroy between scenes
+		DontDestroyOnLoad(gameObject);
+
 		InitGameStates();
 		Application.targetFrameRate = 60;
-
-
 		// PlayerPrefs.DeleteAll(); // USEFUL LATER ON TO PROVIDE PLAYERS AN OPTION TO RESET SCORES
 	}
 

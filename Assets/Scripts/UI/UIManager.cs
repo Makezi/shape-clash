@@ -6,33 +6,21 @@ using System.Collections.Generic;
 
 public class UIManager : MonoBehaviour {
 
+	public static UIManager Instance { get; private set; }
+
 	public Image overlayPanel;								// Reference to overlay panel
 	public List<UIBoard> uiBoards = new List<UIBoard>();	// Reference to all UIBoards
 
-	private static UIManager instance;						// Singleton instance
-
-	public static UIManager Instance {
-		get {
-			if(instance == null){
-				instance = GameObject.FindObjectOfType<UIManager>();
-				DontDestroyOnLoad(instance.gameObject);
-			}
-			return instance;
-		}
-	}
-
 	void Awake(){
-		if(instance == null){
-			// If first instance, make it Singleton
-			instance = this;
-			DontDestroyOnLoad(this);
-		}else{
-			// If Singleton already exists, destroy it
-			if(this != instance){
-				Destroy(this.gameObject);
-			}
+		// Check if there are instance conflicts, if so, destroy other instances
+		if(Instance != null && Instance != this){
+			Destroy(gameObject);
 		}
-		SetActiveStatus();
+		// Save singleton instance
+		Instance = this;
+		// Don't destroy between scenes
+		DontDestroyOnLoad(gameObject);
+		CheckOverlayActiveStatus();
 		InitBoards();
 	}
 
@@ -103,7 +91,7 @@ public class UIManager : MonoBehaviour {
 			overlayPanel.color = Color.Lerp(start, end, i);
 			yield return null;
 		}
-		SetActiveStatus();
+		CheckOverlayActiveStatus();
 		method();
 	}
 
@@ -117,10 +105,10 @@ public class UIManager : MonoBehaviour {
 			overlayPanel.color = Color.Lerp(start, end, i);
 			yield return null;
 		}
-		SetActiveStatus();
+		CheckOverlayActiveStatus();
 	}
 
-	private void SetActiveStatus(){
+	private void CheckOverlayActiveStatus(){
 		bool activeStatus = overlayPanel.color.a <= 0.0f ? false : true;
 		overlayPanel.gameObject.SetActive(activeStatus);
 	}
