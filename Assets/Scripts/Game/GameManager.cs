@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Makezi.StateMachine;
-// using Soomla;
-// using Soomla.Levelup;
+using Soomla;
+using Soomla.Levelup;
 
 public enum Medal { NONE, BRONZE, SILVER, GOLD, PLATINUM, DIAMOND };
 
@@ -20,8 +20,8 @@ public class GameManager : MonoBehaviour {
 	public delegate void GameHandler();
 	public event GameHandler onScore;					// Event triggered when player has scored
 	
-	// private Score score;								// Current session score
-	// private World mainWorld = new World("main_world");	// Game world
+	private Score score;								// Current session score
+	private World mainWorld = new World("main_world");	// Game world
 	private Medal medal;								// Medal earned in current session
 
 	void Awake(){
@@ -48,9 +48,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void Start(){
-		// score = new Score("score");
-		// mainWorld.AddScore(score);
-		// SoomlaLevelUp.Initialize(mainWorld);
+		score = new Score("score");
+		mainWorld.AddScore(score);
+		SoomlaLevelUp.Initialize(mainWorld);
 	}
 
 	void Update(){
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour {
 	private void GameOver(){
 		MedalEarned();
 		// Reset latest score obtained - true means save the score to PlayerPrefs (to determine best scores)
-		// mainWorld.GetSingleScore().Reset(true);
+		mainWorld.GetSingleScore().Reset(true);
 		GameManager.Instance.stateMachine.SetState<GameOver>();
 	}
 
@@ -92,22 +92,22 @@ public class GameManager : MonoBehaviour {
 
 	/* Retrieve current score in session */
 	public int CurrentScore {
-		// get { return (int)mainWorld.GetSingleScore().GetTempScore(); }
-		get { return 0; }
+		get { return (int)mainWorld.GetSingleScore().GetTempScore(); }
+		// get { return 0; }
 	}
 
 	/* Retrieve latest score achieved in previous completed session */
 	public int LatestScore {
-		// get { return (int)mainWorld.GetSingleScore().Latest; }
-		get { return 0; }
+		get { return (int)mainWorld.GetSingleScore().Latest; }
+		// get { return 0; }
 	}
 
 	/* Retrieve best score achieved in all sessions */
 	public int BestScore {
-		// get { 
-		// 	return (int)mainWorld.GetSingleScore().Record > 0 ? (int)mainWorld.GetSingleScore().Record : 0;
-		// }
-		get { return 0; }
+		get { 
+			return (int)mainWorld.GetSingleScore().Record > 0 ? (int)mainWorld.GetSingleScore().Record : 0;
+		}
+		// get { return 0; }
 	}
 
 	/* Retrieve medal earned */
@@ -117,9 +117,8 @@ public class GameManager : MonoBehaviour {
 
 	/* Increment current session score by 1 */
 	public void IncrementScore(){
-		// mainWorld.IncSingleScore(1);
-		// if(onScore != null){ onScore(); }
-		
+		mainWorld.IncSingleScore(1);
+		if(onScore != null){ onScore(); }
 	}
 
 }
