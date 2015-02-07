@@ -7,7 +7,9 @@ namespace Makezi.ObjectPool {
 
 	public class PoolManager : MonoBehaviour {
 
-		public static PoolManager instance;			// Static instance
+		// public static PoolManager instance;			// Static instance
+		public static PoolManager Instance { get; private set; }
+
 		public List<PrefabPool> poolCollection;		// List containing all pooled prefabs
 		
 		// Collection of pools. Used for fast lookups at run-time
@@ -15,7 +17,14 @@ namespace Makezi.ObjectPool {
 
 		// Use this for initialization
 		void Awake(){
-			instance = this;
+			// instance = this;
+			if(Instance != null && Instance != this){
+				Destroy(gameObject);
+			}
+			// Save singleton instance
+			Instance = this;
+			// Don't destroy between scenes
+			DontDestroyOnLoad(gameObject);
 			InitPrefabPools();
 		}
 		

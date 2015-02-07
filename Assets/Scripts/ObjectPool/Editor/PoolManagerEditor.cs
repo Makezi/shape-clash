@@ -81,7 +81,7 @@ namespace Makezi.ObjectPool {
 			if(poolCollection == null){ return; }
 			
 			GUILayout.Space(5f);
-			GUILayout.Label("Pool Objects", EditorStyles.boldLabel);
+			GUILayout.Label("Pooled Objects", EditorStyles.boldLabel);
 			
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.Space(10f);
