@@ -30,7 +30,7 @@ public class Spawner : MonoBehaviour {
 		while(true){
 			// Obtain random obstacle from object pool and initialize it
 			if(obstacle == null){
-				// obstacle = ShapeFactory.GetInstance().GetPseudoRandomShape();
+				obstacle = SpawnManager.Instance.GetPseudoRandomObstacle();
 				obstacle.transform.position = new Vector3(transform.position.x, SpawnManager.Instance.GetRandomSpawnPoint(), 0);
 				obstacle.transform.rotation = transform.rotation;
 				ObstacleController controller = obstacle.GetComponent<ObstacleController>();
@@ -41,7 +41,7 @@ public class Spawner : MonoBehaviour {
 
 			// Remove reference to previously spawned obstacle if distance from obstacle to spawner position is too large
 			if(Mathf.Abs(obstacle.transform.position.x - spawnerXPos) > SpawnManager.Instance.spawnGap){
-				Debug.Log(Mathf.Abs(obstacle.transform.position.x -  spawnerXPos));
+				// Debug.Log(Mathf.Abs(obstacle.transform.position.x -  spawnerXPos));
 				obstacle = null;
 				yield return null;
 			}

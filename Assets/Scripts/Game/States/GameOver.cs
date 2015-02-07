@@ -6,7 +6,7 @@ public class GameOver : State<GameManager> {
 
 	public override void Enter(){
 		// Stop spawning obstacles
-		// SpawnManager.Instance.Spawn(false);
+		SpawnManager.Instance.Spawn(false);
 	}
 
 	public override void Update(){

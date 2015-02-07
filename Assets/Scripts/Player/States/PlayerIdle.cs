@@ -9,9 +9,9 @@ public class PlayerIdle : State<PlayerController> {
 	}
 
 	public override void Update(){
-		// if(GameManager.Instance.stateMachine.CurrentStateEquals<GamePlaying>()){
-		// 	stateMachine.SetState<PlayerMoving>();
-		// }
+		if(GameManager.Instance.stateMachine.CurrentStateEquals<GamePlaying>()){
+			stateMachine.SetState<PlayerMoving>();
+		}
 	}
 
 	public override void FixedUpdate(){

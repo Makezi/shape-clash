@@ -9,7 +9,9 @@ public class GameReady : State<GameManager> {
 	}
 
 	public override void Update(){
-
+		if(Input.GetMouseButtonDown(0)){
+			GameManager.Instance.stateMachine.SetState<GamePlaying>();
+		}
 	}
 
 	public override void FixedUpdate(){

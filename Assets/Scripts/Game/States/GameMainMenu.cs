@@ -9,7 +9,9 @@ public class GameMainMenu : State<GameManager> {
 	}
 
 	public override void Update(){
-
+		if(Input.GetMouseButtonDown(0)){
+			GameManager.Instance.stateMachine.SetState<GameReady>();
+		}
 	}
 
 	public override void FixedUpdate(){

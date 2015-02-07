@@ -2,6 +2,7 @@
 using System.Collections;
 using Makezi.StateMachine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour {
 
 	public float moveSpeed = 10f;							// Constant movement speed
