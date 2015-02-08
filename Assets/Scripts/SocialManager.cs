@@ -7,33 +7,68 @@ using UnityEngine.UI;
 
 public class SocialManager : MonoBehaviour {
 
-	private string gameHashtag;
+	public static SocialManager Instance { get; private set; }
 
-	private bool twitterPosting = false;
+	private string gameHashtag;					// Hash tag format of game name
+	private Provider provider;					// Reference to latest provider logged in
+	private bool sharedOnTwitter = false;		// Flag checking status of sharing on twitter after game session
+	private bool sharedOnFacebook = false;		// Flag checking status of sharing on facebook after game session
+
+	void Awake(){
+		// Check if there are instance conflicts, if so, destroy other instances
+		if(Instance != null && Instance != this){
+			Destroy(gameObject);
+		}
+		// Save singleton instance
+		Instance = this;
+		// Don't destroy between scenes
+		DontDestroyOnLoad(gameObject);
+	}
 
 	void Start(){
+		// Register profile events
+		ProfileEvents.OnLoginStarted += LoginStarted;
 		ProfileEvents.OnLoginFinished += LoginFinished;
-
+		ProfileEvents.OnSocialActionFinished += SocialActionFinished;
+		// Register game state events
+		GameManager.Instance.stateMachine.onStateChanged += HandleStateChange;
+		// Initialise Soomla profile module
 		SoomlaProfile.Initialize();
+		// Compose hashtag of game name for social sharing
 		gameHashtag = "#" + Regex.Replace(GameManager.Instance.gameTitle, @"\s+", ""); 
 	}
 
-	private void LoginFinished(UserProfile userProfileJson, string payload){
-
-		if(SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
-			if(twitterPosting){
-				TwitterShare();
-				twitterPosting = false;
-			}
-		}
-
+	private void LoginStarted(Provider provider, string payload){
+		this.provider = provider;
 	}
 
+	private void LoginFinished(UserProfile userProfileJson, string payload){
+		// Share when the relevant provider has logged in
+		if(provider == Provider.FACEBOOK){
+			FacebookShare();
+		}else if(provider == Provider.TWITTER){
+			TwitterShare();
+		}
+	}
+
+	private void SocialActionFinished(Provider provider, SocialActionType action, string payload){
+		if(provider == Provider.FACEBOOK){
+			sharedOnFacebook = true;
+			Debug.Log("FACEBOOK ACTION COMPLETED");
+		}
+		if(provider == Provider.TWITTER){
+			sharedOnTwitter = true;
+			Debug.Log("TWITTER ACTION COMPLETED");
+		}
+	}
+
+	/* Posts a story on Facebook */
 	public void FacebookShare(){
+		// Log the user in if not already
 		if(!SoomlaProfile.IsLoggedIn(Provider.FACEBOOK)){
 			SoomlaProfile.Login(Provider.FACEBOOK);
 		}
-
+		// Post story on Facebook
 		if(SoomlaProfile.IsLoggedIn(Provider.FACEBOOK)){
 			SoomlaProfile.UpdateStory(
 			Provider.FACEBOOK,
@@ -48,13 +83,16 @@ public class SocialManager : MonoBehaviour {
 		}
 	}
 
+ 	/* Posts a tweet on Twitter */
 	public void TwitterShare(){
+		// Log the user in if not already
 		if(!SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
 			SoomlaProfile.Login(Provider.TWITTER);
-			twitterPosting = true;
+			Debug.Log("LOGGING IN");
 		}
-
+		// Post tweet on Twitter (message dependant on platform)
 		if(SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
+			Debug.Log("POSTING");
 			#if UNITY_IPHONE
 			SoomlaProfile.UpdateStatus(
 				Provider.TWITTER,
@@ -71,168 +109,20 @@ public class SocialManager : MonoBehaviour {
 		}
 	}
 
+	private void HandleStateChange(){
+		// Reset sharing status of social media
+		if(GameManager.Instance.stateMachine.CurrentStateEquals<GameOver>()){
+			sharedOnFacebook = false;
+			sharedOnTwitter = false;
+		}
+	}
 
+	public bool SharedOnFacebook {
+		get { return sharedOnFacebook; }
+	}
 
-
-
-	// private bool sharedOnFacebook;		// Shared on facebook flags during single game session
-	// private bool sharedOnTwitter;		// Shared on twitter flag during single game session
-	// private string gameTag;				// Game title formated as Twitter hash tag
-
-	// // Use this for initialization
-	// void Start () {
-	// 	ProfileEvents.OnSocialActionFinished += SocialActionFinished;
-	// 	SoomlaProfile.Initialize();
-	// 	GameManager.Instance.stateMachine.onStateChanged += HandleStateChange;
-	// 	gameTag = "#" + Regex.Replace(GameManager.Instance.gameTitle, @"\s+", "");
-
-	// 	SoomlaProfile.Logout(Provider.TWITTER);
-	// }
-
-	// private void SocialActionFinished(Provider provider, SocialActionType action, string payload){
-	// 	if(provider == Provider.TWITTER){
-	// 		Debug.Log("SHARED ON TWITTER");
-	// 		sharedOnTwitter = true;
-	// 	}
-	// 	if(provider == Provider.FACEBOOK){
-	// 		sharedOnFacebook = true;
-	// 	}
-	// }
-
-	// /* Posts a story on Facebook */ 
-	// public void FacebookShare(){
-	// 	StopCoroutine("FacebookShareRoutine");
-	// 	StartCoroutine("FacebookShareRoutine");
-	// }
-
-	// private IEnumerator FacebookShareRoutine(){
-	// 	// Return if already shared
-	// 	if(sharedOnFacebook){
-	// 		yield return null;
-	// 	}
-
-	// 	// Attempt to log in if not already logged in
-	// 	if(!SoomlaProfile.IsLoggedIn(Provider.FACEBOOK)){
-	// 		SoomlaProfile.Login(Provider.FACEBOOK);
-	// 	}
-
-	// 	// Give 5 seconds to attempt to log in
-	// 	int waitTime = 5;
-	// 	while(!SoomlaProfile.IsLoggedIn(Provider.FACEBOOK) && waitTime > 0){
-	// 		yield return new WaitForSeconds(1);
-	// 		waitTime--;
-	// 	}
-
-	// 	// If login failed, return
-	// 	if(!SoomlaProfile.IsLoggedIn(Provider.FACEBOOK)){
-	// 		yield return null;
-	// 	}
-
-	// 	// Post story on users facebook page
-	// 	SoomlaProfile.UpdateStory(
-	// 		Provider.FACEBOOK,
-	// 		"I achieved a score of " + GameManager.Instance.LatestScore + " in " + gameTag + ". Can you beat it?",
-	// 		GameManager.Instance.gameTitle,
-	// 		"GET IT ON GOOGLE PLAY OR APPLE APP STORE",
-	// 		"",
-	// 		"www.google.com",
-	// 		"http://cdn3.howtogeek.com/wp-content/uploads/gg/up/sshot4f9824f0ea668.jpg",
-	// 		"",
-	// 		null);
-	// }
-
-	// public void TwitterShareTest(){
-	// 	if(sharedOnTwitter){
-	// 		return;
-	// 	}
-
-	// 	if(!SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
-	// 		SoomlaProfile.Login(Provider.TWITTER);
-	// 	}
-
-	// 	if(!SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
-	// 		return;
-	// 	}
-
-	// 	#if UNITY_IPHONE
-	// 	SoomlaProfile.UpdateStatus(
-	// 		Provider.TWITTER,
-	// 		"I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameTag + " on iOS. Can you beat it?",
-	// 		"",
-	// 		null);
-	// 	#elif UNITY_ANDROID
-	// 	SoomlaProfile.UpdateStatus(
-	// 		Provider.TWITTER,
-	// 		"I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameTag + " on Android. Can you beat it?",
-	// 		"",
-	// 		null);
-	// 	#endif
-	// } 
-
-	// /* Posts a tweet on Twitter */
-	// public void TwitterShare(){
-	// 	StopCoroutine("TwitterShareRoutine");
-	// 	StartCoroutine("TwitterShareRoutine");
-	// }
-
-	// private IEnumerator TwitterShareRoutine(){
-	// 	// Return if already shared
-	// 	if(sharedOnTwitter){
-	// 		yield return null;
-	// 	}
-
-	// 	// Attempt to log in if not already logged in
-	// 	if(!SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
-	// 		SoomlaProfile.Login(Provider.TWITTER);
-	// 	}
-
-	// 	// Give 5 seconds to attempt to log in
-	// 	int waitTime = 5;
-	// 	while(!SoomlaProfile.IsLoggedIn(Provider.TWITTER) && waitTime > 0){
-	// 		yield return new WaitForSeconds(1);
-	// 		waitTime--;
-	// 	}
-
-	// 	// If login failed, return
-	// 	if(!SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
-	// 		yield return null;
-	// 	}
-
-	// 	// Post tweet. Message dependant on platform
-	// 	#if UNITY_IPHONE
-	// 	SoomlaProfile.UpdateStatus(
-	// 		Provider.TWITTER,
-	// 		"I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameTag + " on iOS. Can you beat it?",
-	// 		"",
-	// 		null);
-	// 	#elif UNITY_ANDROID
-	// 	SoomlaProfile.UpdateStatus(
-	// 		Provider.TWITTER,
-	// 		"I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameTag + " on Android. Can you beat it?",
-	// 		"",
-	// 		null);
-	// 	#endif
-	// }
-
-	// /* Opens apps page on the platform store for simple rating */
-	// public void OpenAppRatingPage(){
-	// 	SoomlaProfile.OpenAppRatingPage();
-	// }
-
-	// private void HandleStateChange(){
-	// 	/* Reset sharing flags at the end of each game session */
-	// 	if(GameManager.Instance.stateMachine.CurrentStateEquals<GameOver>()){
-	// 		sharedOnFacebook = false;
-	// 		sharedOnTwitter = false;
-	// 	}
-	// }
-
-	// public bool FacebookShareStatus {
-	// 	get { return sharedOnFacebook; }
-	// }
-
-	// public bool TwitterShareStatus {
-	// 	get { return sharedOnTwitter; }
-	// }
+	public bool SharedOnTwitter {
+		get { return sharedOnTwitter; }
+	}
 	
 }
