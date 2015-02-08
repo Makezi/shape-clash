@@ -9,9 +9,24 @@ public class SocialManager : MonoBehaviour {
 
 	private string gameHashtag;
 
+	private bool twitterPosting = false;
+
 	void Start(){
+		ProfileEvents.OnLoginFinished += LoginFinished;
+
 		SoomlaProfile.Initialize();
 		gameHashtag = "#" + Regex.Replace(GameManager.Instance.gameTitle, @"\s+", ""); 
+	}
+
+	private void LoginFinished(UserProfile userProfileJson, string payload){
+
+		if(SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
+			if(twitterPosting){
+				TwitterShare();
+				twitterPosting = false;
+			}
+		}
+
 	}
 
 	public void FacebookShare(){
@@ -32,6 +47,31 @@ public class SocialManager : MonoBehaviour {
 			null);
 		}
 	}
+
+	public void TwitterShare(){
+		if(!SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
+			SoomlaProfile.Login(Provider.TWITTER);
+			twitterPosting = true;
+		}
+
+		if(SoomlaProfile.IsLoggedIn(Provider.TWITTER)){
+			#if UNITY_IPHONE
+			SoomlaProfile.UpdateStatus(
+				Provider.TWITTER,
+				"I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameHashtag + " on iOS. Can you beat it?",
+				"",
+				null);
+			#elif UNITY_ANDROID
+			SoomlaProfile.UpdateStatus(
+				Provider.TWITTER,
+				"I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameHashtag + " on Android. Can you beat it?",
+				"",
+				null);
+			#endif
+		}
+	}
+
+
 
 
 
