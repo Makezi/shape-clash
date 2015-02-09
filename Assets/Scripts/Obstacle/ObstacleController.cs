@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Makezi.ObjectPool;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class ObstacleController : MonoBehaviour {
@@ -12,7 +13,7 @@ public class ObstacleController : MonoBehaviour {
 	private Shape shape;				// Current shape set
 	private PlayerController player;	// Reference to PlayerController
 	private Rigidbody2D myRigidbody2D;	// Reference to this object's rigidbody2D component
-	public float currentSpeed;			// Current movement speed
+	private float currentSpeed;			// Current movement speed
 
 	void Awake(){
 		myRigidbody2D = rigidbody2D;
@@ -46,6 +47,7 @@ public class ObstacleController : MonoBehaviour {
 			if(player.Shape.GetShape() == shape.GetShape()){
 				// Increment game score if player shape and obstacle shape compare
 				GameManager.Instance.IncrementScore();
+				PlayScoreEffect();
 			}else{
 				player.Destroy();
 			}
@@ -69,8 +71,16 @@ public class ObstacleController : MonoBehaviour {
 		}
 	}
 
+	/* Sets object as inactive */
 	private void Destroy(){
 		gameObject.SetActive(false);
+	}
+
+	/* Plays special death effects when player has scored */
+	private void PlayScoreEffect(){
+		GameObject ps = PoolManager.Instance.Spawn("Obstacle_Death_Effect");
+		ps.transform.position = transform.position;
+		ps.transform.rotation = transform.rotation;
 	}
 
 	public Shape Shape {
