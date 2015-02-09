@@ -24,7 +24,7 @@ public class GameOverBoard : UIBoard {
 		gameObject.SetActive(true);
 		// anim.Play("GameSummaryTransitionIn");
 		// anim.enabled = true;
-		// HeyZapManager.instance.ShowInterstitialOnGameOver();
+		HeyZapManager.Instance.ShowInterstitialOnGameOver();
 	}
 	
 	public override void Update(){
