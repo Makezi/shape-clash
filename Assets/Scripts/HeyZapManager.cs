@@ -19,60 +19,40 @@ public class HeyZapManager : MonoBehaviour {
 		Instance = this;
 		// Don't destroy between scenes
 		DontDestroyOnLoad(gameObject);
+		// Initialize HeyZap
+		HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_DISABLE_AUTOMATIC_FETCHING);
+		FetchInterstitial("gameover");
 	}
 
-	// Use this for initialization
-	void Start () {
-		// Initialize HeyZap
-		HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_NO_OPTIONS);
-		// HeyzapAds.showMediationTestSuite();
-		// Show ad on startup after second playthrough onwards
-		if(!PlayerPrefs.HasKey("firstload")){
-			PlayerPrefs.SetString("firstload", "true");
-		}else{
-			ShowInterstitial();
-		}
-	}
+	/* Show ads on awake - currently not working well, too slow to fetch */
+	// private void ShowInterstitialOnAwake(){
+	// 	if(!PlayerPrefs.HasKey("firstload")){
+	// 		PlayerPrefs.SetString("firstload", "true");
+	// 	}else{
+	// 		ShowInterstitial();
+	// 	}
+	// }
 
 	/* Show interstitial ads on game over after set number of games or set score achieved */
 	public void ShowInterstitialOnGameOver(){
 		gamesCompleted++;
 		if(gamesCompleted == showAfterNoGames || GameManager.Instance.LatestScore >= showAfterScore){
-			gamesCompleted = 0;
-			ShowInterstitial();
+			if(HZInterstitialAd.isAvailable("gameover")){
+				gamesCompleted = 0;
+				ShowInterstitial("gameover");
+				FetchInterstitial("gameover");
+			}
 		}
 	}
 
-	/* Show interstitial ad (whichever ad was requested from mediation network) */
-	private void ShowInterstitial(){
-		HZInterstitialAd.show();
+	/* Show interstitial ad (whichever ad was requested from mediation network) using tag */
+	private void ShowInterstitial(string tag){
+		HZInterstitialAd.show(tag);
 	}
 
-	
-
-	// public static HeyZapManager instance;
-
-	// void Awake(){
-	// 	instance = this;
-	// }
-
-	// // Use this for initialization
-	// void Start () {
-	// 	// Initialize HeyZap
-	// 	HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_NO_OPTIONS);
-	// }
-
-	// /* Show interstitial ads on game over after set number of games or set score achieved */
-	// public void ShowInterstitialOnGameOver(){
-	// 	gamesCompleted++;
-	// 	if(gamesCompleted == showAfterNoGames || GameManager.Instance.LatestScore >= showAfterScore){
-	// 		gamesCompleted = 0;
-	// 		ShowInterstitial();
-	// 	}
-	// }
-
-	// private void ShowInterstitial(){
-	// 	HZInterstitialAd.show();
-	// }
+	/* Fetch ad with specific tag */
+	public void FetchInterstitial(string tag){
+		HZInterstitialAd.fetch(tag);
+	}
 	
 }
