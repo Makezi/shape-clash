@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Makezi.StateMachine;
+using Makezi.ObjectPool;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour {
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour {
 	public static event DeathHandler onPlayerDeath;			// Event triggered on player death
 
 	private StateMachine<PlayerController> stateMachine;	// Reference to player's state machine
+	private ParticleSystem ps;								// Reference to particle system
 	private Shape shape;									// Reference to attached shape component						
 	private Shape[] childShapes;							// Array containing reference to all child game objects with Shape component
 	private Vector3 startingPosition;						// Reference to initial starting position
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour {
 	private void InitStates(){
 		stateMachine = new StateMachine<PlayerController>(this, new PlayerIdle());
 		stateMachine.AddState(new PlayerMoving());
+		stateMachine.AddState(new PlayerDead());
 	}
 
 	void Update(){
@@ -70,9 +73,24 @@ public class PlayerController : MonoBehaviour {
 
 	/* Signifies player death */
 	public void Destroy(){
+		StartCoroutine("Death");
+	}
+
+	/* Sets player state to dead and plays death effects */
+	private IEnumerator Death(){
 		isDead = true;
-		gameObject.SetActive(false);
+		// Change player state to dead
+		stateMachine.SetState<PlayerDead>();
+		// Play death effect
+		GameObject obj = PoolManager.Instance.Spawn("Player_Death_Effect");
+		obj.transform.position = transform.position;
+		obj.transform.rotation = transform.rotation;
+		// Set child shape to inactive
+		childObj.SetActive(false);
+		// Wait set duration before triggering death event
+		yield return new WaitForSeconds(1.25f);
 		if(onPlayerDeath != null){ onPlayerDeath(); }
+		gameObject.SetActive(false);
 	}
 
 	/* Sets current scale of GameObject */
