@@ -25,7 +25,13 @@ public class HeyZapManager : MonoBehaviour {
 	void Start () {
 		// Initialize HeyZap
 		HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_NO_OPTIONS);
-		HeyzapAds.showMediationTestSuite();
+		// HeyzapAds.showMediationTestSuite();
+		// Show ad on startup after second playthrough onwards
+		if(!PlayerPrefs.HasKey("firstload")){
+			PlayerPrefs.SetString("firstload", "true");
+		}else{
+			ShowInterstitial();
+		}
 	}
 
 	/* Show interstitial ads on game over after set number of games or set score achieved */
