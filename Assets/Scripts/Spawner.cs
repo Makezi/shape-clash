@@ -20,7 +20,9 @@ public class Spawner : MonoBehaviour {
 
 	/* Toggle spawning off */
 	public void StopSpawning(){
+		obstacle = null;
 		StopCoroutine("Spawn");
+
 	}
 
 	/* Spawn an obstacle at a random spawn position from the remaining spawn points list. Obstacles are spawned

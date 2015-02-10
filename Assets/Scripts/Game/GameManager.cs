@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
 	public PlayerController player;						// Reference to PlayerController
 	public StateMachine<GameManager> stateMachine;		// Game state machine				
 	public int[] medalBreakpoints;						// Score breakpoints which reward medals
+	public AudioClip onScoreClip;						// Audio clip for scoring
 
 	public delegate void GameHandler();
 	public event GameHandler onScore;					// Event triggered when player has scored
@@ -118,6 +119,7 @@ public class GameManager : MonoBehaviour {
 	/* Increment current session score by 1 */
 	public void IncrementScore(){
 		mainWorld.IncSingleScore(1);
+		AudioManager.Instance.PlayClip(onScoreClip);
 		if(onScore != null){ onScore(); }
 	}
 

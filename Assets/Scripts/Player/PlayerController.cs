@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
 	public float moveSpeed = 10f;							// Constant movement speed
 	public float size = 0.75f;								// Transform scale 
 	public GameObject childObj;								// Reference to child game object containing Shape component
+	public AudioClip deathClip;
 
 	public delegate void DeathHandler();
 	public static event DeathHandler onPlayerDeath;			// Event triggered on player death
@@ -28,9 +29,6 @@ public class PlayerController : MonoBehaviour {
 		}
 		childObj.SetActive(true);
 		startingPosition = transform.position;
-	}
-
-	void Start(){
 		InitStates();
 	}
 
@@ -73,6 +71,7 @@ public class PlayerController : MonoBehaviour {
 
 	/* Signifies player death */
 	public void Destroy(){
+		AudioManager.Instance.PlayClip(deathClip);
 		StartCoroutine("Death");
 	}
 
