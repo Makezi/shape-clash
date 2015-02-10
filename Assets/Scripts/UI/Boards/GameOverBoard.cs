@@ -9,6 +9,7 @@ public class GameOverBoard : UIBoard {
 	public Text twitterText;
 	public Text facebookText;
 	public Text medalText;				// Temp solution
+	public AudioClip gameOverClip;
 	// public SocialManager socialManager;
 	
 	// private Animator anim;				// Reference to UI animator
@@ -25,6 +26,7 @@ public class GameOverBoard : UIBoard {
 		// anim.Play("GameSummaryTransitionIn");
 		// anim.enabled = true;
 		HeyZapManager.Instance.ShowInterstitialOnGameOver();
+		AudioManager.Instance.PlayClip(gameOverClip);
 	}
 	
 	public override void Update(){
