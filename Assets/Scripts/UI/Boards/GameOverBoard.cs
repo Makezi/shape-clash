@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class GameOverBoard : UIBoard {
 
+	public Animator gameOverLabelAnim;
 	public Text latestScoreText;		// Reference to latest score text
 	public Text bestScoreText;			// Reference to best score text
 	public Text twitterText;
@@ -27,6 +28,9 @@ public class GameOverBoard : UIBoard {
 		// anim.enabled = true;
 		HeyZapManager.Instance.ShowInterstitialOnGameOver();
 		AudioManager.Instance.PlayClip(gameOverClip);
+
+		// Invoke("gameOverLabel.Play", "GameOverLabelTransition");
+		// gameOverLabelAnim.Play("GameOverLabelTransition");
 	}
 	
 	public override void Update(){
