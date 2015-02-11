@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class UIManager : MonoBehaviour {
 
 	public static UIManager Instance { get; private set; }
-
+	
 	public Image overlayPanel;								// Reference to overlay panel
 	public List<UIBoard> uiBoards = new List<UIBoard>();	// Reference to all UIBoards
 
@@ -112,4 +112,5 @@ public class UIManager : MonoBehaviour {
 		bool activeStatus = overlayPanel.color.a <= 0.0f ? false : true;
 		overlayPanel.gameObject.SetActive(activeStatus);
 	}
+
 }
