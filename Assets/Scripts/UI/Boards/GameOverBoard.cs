@@ -78,4 +78,9 @@ public class GameOverBoard : UIBoard {
 		UIManager.Instance.overlayPanel.transform.SetAsLastSibling();
 		UIManager.Instance.FadeScreen(() => GameManager.Instance.stateMachine.SetState<GameReady>(), 0.4f, 1.0f);
 	}
+
+	public void MainMenu(){
+		UIManager.Instance.overlayPanel.transform.SetAsLastSibling();
+		UIManager.Instance.FadeScreen(() => GameManager.Instance.stateMachine.SetState<GameMainMenu>(), 0.4f, 1.0f);
+	}
 }

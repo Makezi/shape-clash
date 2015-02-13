@@ -15,6 +15,7 @@ public class GameMainMenuBoard : UIBoard {
 
 	protected override void Enter(){
 		gameObject.SetActive(true);
+		UIManager.Instance.FadeScreen(0.4f, 0.0f);
 	}
 
 	public override void Update(){}
