@@ -7,11 +7,9 @@ public class GameOverBoard : UIBoard {
 	public Animator gameOverLabelAnim;
 	public Text latestScoreText;		// Reference to latest score text
 	public Text bestScoreText;			// Reference to best score text
-	public Text twitterText;
-	public Text facebookText;
+	public Image twitterTick;
+	public Image facebookTick;
 	public Text medalText;				// Temp solution
-	public AudioClip gameOverClip;
-	// public SocialManager socialManager;
 	
 	// private Animator anim;				// Reference to UI animator
 
@@ -27,7 +25,6 @@ public class GameOverBoard : UIBoard {
 		// anim.Play("GameSummaryTransitionIn");
 		// anim.enabled = true;
 		HeyZapManager.Instance.ShowInterstitialOnGameOver();
-		AudioManager.Instance.PlayClip(gameOverClip);
 
 		// Invoke("gameOverLabel.Play", "GameOverLabelTransition");
 		// gameOverLabelAnim.Play("GameOverLabelTransition");
@@ -45,20 +42,12 @@ public class GameOverBoard : UIBoard {
 		if(bestScoreText != null){
 			bestScoreText.text = GameManager.Instance.BestScore.ToString();
 		}
-		// if(twitterText != null){
-		// 	if(socialManager.TwitterShareStatus){
-		// 		twitterText.text = "TW:S";
-		// 	}else{
-		// 		twitterText.text = "TW";
-		// 	}
-		// }
-		// if(facebookText != null){
-		// 	if(socialManager.FacebookShareStatus){
-		// 		facebookText.text = "FB:S";
-		// 	}else{
-		// 		facebookText.text = "FB";
-		// 	}
-		// }
+		if(twitterTick != null){
+			twitterTick.enabled = SocialManager.Instance.SharedOnTwitter;
+		}
+		if(facebookTick != null){
+			facebookTick.enabled = SocialManager.Instance.SharedOnFacebook;
+		}
 		if(medalText != null){
 			medalText.text = GameManager.Instance.Medal.ToString();
 		}

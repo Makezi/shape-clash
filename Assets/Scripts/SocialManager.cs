@@ -109,6 +109,11 @@ public class SocialManager : MonoBehaviour {
 		}
 	}
 
+	/* Opens the app rating page dependant on platform */
+	public void OpenAppRatingPage(){
+		SoomlaProfile.OpenAppRatingPage();
+	}
+
 	private void HandleStateChange(){
 		// Reset sharing status of social media
 		if(GameManager.Instance.stateMachine.CurrentStateEquals<GameOver>()){
