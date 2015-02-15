@@ -11,10 +11,10 @@ public class GameOverBoard : UIBoard {
 	public Image facebookTick;
 	public Text medalText;				// Temp solution
 	
-	// private Animator anim;				// Reference to UI animator
+	private Animator anim;				// Reference to UI animator
 
 	void Awake () {
-		// anim = GetComponent<Animator>();
+		anim = GetComponent<Animator>();
 	}
 
 	protected override void Enter(){
@@ -22,8 +22,8 @@ public class GameOverBoard : UIBoard {
 		UIManager.Instance.overlayPanel.transform.SetAsFirstSibling();
 		UIManager.Instance.FadeScreen(0.4f, 0.5f);
 		gameObject.SetActive(true);
-		// anim.Play("GameSummaryTransitionIn");
-		// anim.enabled = true;
+		anim.Play("GameOverTransition");
+		anim.enabled = true;
 		HeyZapManager.Instance.ShowInterstitialOnGameOver();
 
 		// Invoke("gameOverLabel.Play", "GameOverLabelTransition");
