@@ -9,7 +9,7 @@ public class GameMainMenuBoard : UIBoard {
 	new void Start(){
 		base.Start();
 		if(gameNameLabel != null){
-			gameNameLabel.text = GameManager.Instance.gameTitle;
+			gameNameLabel.text = GameManager.Instance.gameTitle.ToUpper();
 		}	
 	}
 
