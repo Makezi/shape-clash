@@ -12,7 +12,8 @@ public class GameOverBoard : UIBoard {
 	public Image medalIcon;				// Reference to medal earned icon
 	public Sprite noMedalSprite;		// Reference to the no medal sprite
 	public List<Sprite> medalSprites;	// Reference to list of medal sprites
-	public AudioClip medalEarnedClip;	// Reference to the medal earned audio clipped played on earning of medal
+	public AudioClip newBestClip;		// Reference to the medal earned audio clipped played on earning new best
+	public Text newBestScoreText;		// Reference to new best score text
 	
 	private Animator anim;				// Reference to UI animator
 
@@ -30,6 +31,16 @@ public class GameOverBoard : UIBoard {
 		HeyZapManager.Instance.ShowInterstitialOnGameOver();
 		// Update medal icon
 		medalIcon.sprite = GetMedalSprite(GameManager.Instance.Medal.ToString());
+		// Display message and play audio sfx on new best score
+		if(newBestScoreText != null){
+			if(GameManager.Instance.NewBest){
+				AudioManager.Instance.PlayClip(newBestClip);
+				newBestScoreText.gameObject.SetActive(true);
+			}else{
+				newBestScoreText.gameObject.SetActive(false);
+			}
+			newBestScoreText.gameObject.SetActive(GameManager.Instance.NewBest);
+		}
 	}
 
 	/* Retrieves medal sprite from list of available medals when comparison is made to medal earned */
@@ -37,8 +48,6 @@ public class GameOverBoard : UIBoard {
 		for(int i = 0; i < medalSprites.Count; ++i){
 			string lower = medalSprites[i].name.ToLower();
 			if(lower.Contains(name.ToLower())){
-				// Play clip if medal found
-				AudioManager.Instance.PlayClip(medalEarnedClip);
 				return medalSprites[i];
 			}
 		}
@@ -63,12 +72,6 @@ public class GameOverBoard : UIBoard {
 		if(facebookTick != null){
 			facebookTick.enabled = SocialManager.Instance.SharedOnFacebook;
 		}
-
-
-
-		// if(medalText != null){
-		// 	medalText.text = GameManager.Instance.Medal.ToString();
-		// }
 	}
 
 	protected override void Exit(){

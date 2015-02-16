@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour {
 	private Score score;								// Current session score
 	private World mainWorld = new World("main_world");	// Game world
 	private Medal medal;								// Medal earned in current session
+	private bool newBest = false;						// Flag for determine if new best score achieved in current session
 
 	void Awake(){
 		// Check if there are instance conflicts, if so, destroy other instances
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour {
 		score = new Score("score");
 		mainWorld.AddScore(score);
 		SoomlaLevelUp.Initialize(mainWorld);
+		stateMachine.onStateChanged += HandleStateChange;
 	}
 
 	void Update(){
@@ -94,13 +96,11 @@ public class GameManager : MonoBehaviour {
 	/* Retrieve current score in session */
 	public int CurrentScore {
 		get { return (int)mainWorld.GetSingleScore().GetTempScore(); }
-		// get { return 0; }
 	}
 
 	/* Retrieve latest score achieved in previous completed session */
 	public int LatestScore {
 		get { return (int)mainWorld.GetSingleScore().Latest; }
-		// get { return 0; }
 	}
 
 	/* Retrieve best score achieved in all sessions */
@@ -108,7 +108,11 @@ public class GameManager : MonoBehaviour {
 		get { 
 			return (int)mainWorld.GetSingleScore().Record > 0 ? (int)mainWorld.GetSingleScore().Record : 0;
 		}
-		// get { return 0; }
+	}
+
+	/* Retrieve new best flag */
+	public bool NewBest {
+		get { return newBest; }
 	}
 
 	/* Retrieve medal earned */
@@ -118,9 +122,20 @@ public class GameManager : MonoBehaviour {
 
 	/* Increment current session score by 1 */
 	public void IncrementScore(){
+		// Determine if new best has been achieved
+		if(CurrentScore + 1 > BestScore){
+			newBest = true;
+		}
 		mainWorld.IncSingleScore(1);
 		AudioManager.Instance.PlayClip(onScoreClip);
 		if(onScore != null){ onScore(); }
+	}
+
+	private void HandleStateChange(){
+		// Reset new best flag
+		if(stateMachine.CurrentStateEquals<GameReady>()){
+			newBest = false;
+		}
 	}
 
 }
