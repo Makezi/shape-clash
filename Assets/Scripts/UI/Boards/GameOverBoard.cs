@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class GameOverBoard : UIBoard {
 
-	public Animator gameOverLabelAnim;
 	public Text latestScoreText;		// Reference to latest score text
 	public Text bestScoreText;			// Reference to best score text
-	public Image twitterTick;
-	public Image facebookTick;
-	public Text medalText;				// Temp solution
+	public Image twitterTick;			// Reference to tick icon for twitter share status
+	public Image facebookTick;			// Reference to tick icon for facebook share status
+	public Image medalIcon;				// Reference to medal earned icon
+	public Sprite noMedalSprite;		// Reference to the no medal sprite
+	public List<Sprite> medalSprites;	// Reference to list of medal sprites
+	public AudioClip medalEarnedClip;	// Reference to the medal earned audio clipped played on earning of medal
 	
 	private Animator anim;				// Reference to UI animator
 
@@ -25,9 +28,21 @@ public class GameOverBoard : UIBoard {
 		anim.Play("GameOverTransition");
 		anim.enabled = true;
 		HeyZapManager.Instance.ShowInterstitialOnGameOver();
+		// Update medal icon
+		medalIcon.sprite = GetMedalSprite(GameManager.Instance.Medal.ToString());
+	}
 
-		// Invoke("gameOverLabel.Play", "GameOverLabelTransition");
-		// gameOverLabelAnim.Play("GameOverLabelTransition");
+	/* Retrieves medal sprite from list of available medals when comparison is made to medal earned */
+	private Sprite GetMedalSprite(string name){
+		for(int i = 0; i < medalSprites.Count; ++i){
+			string lower = medalSprites[i].name.ToLower();
+			if(lower.Contains(name.ToLower())){
+				// Play clip if medal found
+				AudioManager.Instance.PlayClip(medalEarnedClip);
+				return medalSprites[i];
+			}
+		}
+		return noMedalSprite;
 	}
 	
 	public override void Update(){
@@ -48,9 +63,12 @@ public class GameOverBoard : UIBoard {
 		if(facebookTick != null){
 			facebookTick.enabled = SocialManager.Instance.SharedOnFacebook;
 		}
-		if(medalText != null){
-			medalText.text = GameManager.Instance.Medal.ToString();
-		}
+
+
+
+		// if(medalText != null){
+		// 	medalText.text = GameManager.Instance.Medal.ToString();
+		// }
 	}
 
 	protected override void Exit(){
