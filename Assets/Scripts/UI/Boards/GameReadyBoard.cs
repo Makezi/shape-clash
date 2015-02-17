@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public class GameReadyBoard : UIBoard {
 
-	public Text bestScoreText;
-	public Text instructionText;
+	public Text bestScoreText;			// Reference to best score text
 
 	protected override void Enter(){
 		gameObject.SetActive(true);
@@ -13,6 +12,7 @@ public class GameReadyBoard : UIBoard {
 	}
 
 	public override void Update(){
+		// Tap screen to play game
 		if(Input.GetMouseButton(0)){
 			GameManager.Instance.stateMachine.SetState<GamePlaying>();
 		}
