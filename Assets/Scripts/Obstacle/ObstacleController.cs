@@ -68,6 +68,9 @@ public class ObstacleController : MonoBehaviour {
 		if(GameManager.Instance.stateMachine.CurrentStateEquals<GameReady>()){
 			currentSpeed = startingSpeed;
 			Destroy();
+		}else if(GameManager.Instance.stateMachine.CurrentStateEquals<GameMainMenu>()){
+			currentSpeed = startingSpeed;
+			Destroy();
 		}
 	}
 
