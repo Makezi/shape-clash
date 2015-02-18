@@ -20,8 +20,9 @@ public class HeyZapManager : MonoBehaviour {
 		// Don't destroy between scenes
 		DontDestroyOnLoad(gameObject);
 		// Initialize HeyZap
-		HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_DISABLE_AUTOMATIC_FETCHING);
-		FetchInterstitial("gameover");
+		HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_NO_OPTIONS);
+		// HeyzapAds.start("b5add26258f6b768fb2a7a643be8c49f", HeyzapAds.FLAG_DISABLE_AUTOMATIC_FETCHING);
+		// FetchInterstitial("gameover");
 	}
 
 	/* Show ads on awake - currently not working well, too slow to fetch */
@@ -37,11 +38,13 @@ public class HeyZapManager : MonoBehaviour {
 	public void ShowInterstitialOnGameOver(){
 		gamesCompleted++;
 		if(gamesCompleted == showAfterNoGames || GameManager.Instance.LatestScore >= showAfterScore){
-			if(HZInterstitialAd.isAvailable("gameover")){
-				gamesCompleted = 0;
-				ShowInterstitial("gameover");
-				FetchInterstitial("gameover");
-			}
+			HZInterstitialAd.show();
+			gamesCompleted = 0;
+			// if(HZInterstitialAd.isAvailable("gameover")){
+			// 	gamesCompleted = 0;
+			// 	ShowInterstitial("gameover");
+			// 	FetchInterstitial("gameover");
+			// }
 		}
 	}
 
