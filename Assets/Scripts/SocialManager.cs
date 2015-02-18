@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using Soomla;
@@ -68,16 +69,17 @@ public class SocialManager : MonoBehaviour {
 		if(!SoomlaProfile.IsLoggedIn(Provider.FACEBOOK)){
 			SoomlaProfile.Login(Provider.FACEBOOK);
 		}
+		
 		// Post story on Facebook
 		if(SoomlaProfile.IsLoggedIn(Provider.FACEBOOK)){
 			SoomlaProfile.UpdateStory(
 			Provider.FACEBOOK,
-			"I achieved a score of " + GameManager.Instance.LatestScore + " in " + gameHashtag + ". Can you beat it?",
+			"Available now on the Apple App Store!",
+			"I just achieved a score of " + GameManager.Instance.LatestScore + " in " + gameHashtag + ". Can you beat it?",
 			GameManager.Instance.gameTitle,
-			"GET IT ON GOOGLE PLAY OR APPLE APP STORE",
 			"",
-			"www.google.com",
-			"http://cdn3.howtogeek.com/wp-content/uploads/gg/up/sshot4f9824f0ea668.jpg",
+			"https://twitter.com/MakeziApps",
+			"http://i.imgur.com/BWvNZPG.png",
 			"",
 			null);
 		}
