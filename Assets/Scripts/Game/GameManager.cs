@@ -78,18 +78,26 @@ public class GameManager : MonoBehaviour {
 
 	/* Determine which medal was earned from score achieved in current game session */
 	private void MedalEarned(){
-		if(CurrentScore >= medalBreakpoints[0] && CurrentScore < medalBreakpoints[1]){
+		medal = Medal.NONE;
+		if(CurrentScore >= medalBreakpoints[0]){
 			medal = Medal.BRONZE;
-		}else if(CurrentScore >= medalBreakpoints[1] && CurrentScore < medalBreakpoints[2]){
+			PlayerPrefs.SetInt("BronzeMedal", 1);
+		}
+		if(CurrentScore >= medalBreakpoints[1]){
 			medal = Medal.SILVER;
-		}else if(CurrentScore >= medalBreakpoints[2] && CurrentScore < medalBreakpoints[3]){
+			PlayerPrefs.SetInt("SilverMedal", 1);
+		}
+		if(CurrentScore >= medalBreakpoints[2]){
 			medal = Medal.GOLD;
-		}else if(CurrentScore >= medalBreakpoints[3] && CurrentScore < medalBreakpoints[4]){
+			PlayerPrefs.SetInt("GoldMedal", 1);
+		}
+		if(CurrentScore >= medalBreakpoints[3]){
 			medal = Medal.PLATINUM;
-		}else if(CurrentScore >= medalBreakpoints[4]){
+			PlayerPrefs.SetInt("PlatinumMedal", 1);
+		}
+		if(CurrentScore >= medalBreakpoints[4]){
 			medal = Medal.DIAMOND;
-		}else{
-			medal = Medal.NONE;
+			PlayerPrefs.SetInt("DiamondMedal", 1);
 		}
 	}
 

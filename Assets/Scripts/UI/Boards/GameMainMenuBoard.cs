@@ -5,6 +5,7 @@ using System.Collections;
 public class GameMainMenuBoard : UIBoard {
 
 	public Text gameNameLabel;
+	public MedalCaseUI medalCase;
 
 	new void Start(){
 		base.Start();
@@ -16,6 +17,7 @@ public class GameMainMenuBoard : UIBoard {
 	protected override void Enter(){
 		gameObject.SetActive(true);
 		UIManager.Instance.FadeScreen(0.4f, 0.0f);
+		medalCase.CloseCase();
 	}
 
 	public override void Update(){}
