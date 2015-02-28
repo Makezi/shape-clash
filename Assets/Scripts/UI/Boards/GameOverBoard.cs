@@ -7,8 +7,6 @@ public class GameOverBoard : UIBoard {
 
 	public Text latestScoreText;		// Reference to latest score text
 	public Text bestScoreText;			// Reference to best score text
-	public Image twitterTick;			// Reference to tick icon for twitter share status
-	public Image facebookTick;			// Reference to tick icon for facebook share status
 	public Image medalIcon;				// Reference to medal earned icon
 	public Sprite noMedalSprite;		// Reference to the no medal sprite
 	public List<Sprite> medalSprites;	// Reference to list of medal sprites
@@ -65,12 +63,6 @@ public class GameOverBoard : UIBoard {
 		}
 		if(bestScoreText != null){
 			bestScoreText.text = GameManager.Instance.BestScore.ToString();
-		}
-		if(twitterTick != null){
-			twitterTick.enabled = SocialManager.Instance.SharedOnTwitter;
-		}
-		if(facebookTick != null){
-			facebookTick.enabled = SocialManager.Instance.SharedOnFacebook;
 		}
 	}
 
