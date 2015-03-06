@@ -2,13 +2,14 @@
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
-using Soomla;
-using Soomla.Profile;
 using UnityEngine.UI;
 
 public class SocialManager : MonoBehaviour {
 
 	public static SocialManager Instance { get; private set; }
+
+	public string iosID;
+	public string androidID;
 
 	private string gameHashtag;					// Hash tag format of game name
 
@@ -24,8 +25,6 @@ public class SocialManager : MonoBehaviour {
 	}
 
 	void Start(){
-		// Initialise Soomla profile module
-		SoomlaProfile.Initialize();
 		// Compose hashtag of game name for social sharing
 		gameHashtag = "#" + Regex.Replace(GameManager.Instance.gameTitle, @"\s+", ""); 
 	}
@@ -45,7 +44,11 @@ public class SocialManager : MonoBehaviour {
 		tex.ReadPixels( new Rect(0, 0, width, height), 0, 0 );
 		tex.Apply();
 
-		SPShareUtility.FacebookShare("I just achieved a score of " + GameManager.Instance.LatestScore + " in " + gameHashtag + ". Can you beat it?", tex);
+		#if UNITY_IPHONE
+		SPShareUtility.FacebookShare("I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameHashtag + " on iOS. Can you beat it?", tex);
+		#elif UNITY_ANDROID
+		SPShareUtility.FacebookShare("I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameHashtag + " on Android. Can you beat it?", tex);
+		#endif
 
 		Destroy(tex);
 	}
@@ -67,7 +70,7 @@ public class SocialManager : MonoBehaviour {
 
 		#if UNITY_IPHONE
 		SPShareUtility.TwitterShare("I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameHashtag + " on iOS. Can you beat it?", tex);
-		#elif
+		#elif UNITY_ANDROID
 		SPShareUtility.TwitterShare("I just scored " + GameManager.Instance.LatestScore + " in a game of " + gameHashtag + " on Android. Can you beat it?", tex);
 		#endif
 
@@ -76,7 +79,11 @@ public class SocialManager : MonoBehaviour {
 
 	/* Opens the app rating page dependant on platform */
 	public void OpenAppRatingPage(){
-		SoomlaProfile.OpenAppRatingPage();
+		#if UNITY_IPHONE
+		Application.OpenURL("itms-apps://itunes.apple.com/app/id" + iosID);
+		#elif UNITY_ANDROID
+		Application.OpenURL("market://details?id=" + androidID);
+		#endif
 	}
 	
 }
